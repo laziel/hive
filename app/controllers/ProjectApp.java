@@ -164,7 +164,7 @@ public class ProjectApp extends Controller {
         } else if (filledNewProjectForm.hasErrors()) {
             filledNewProjectForm.reject("name");
             flash(Constants.WARNING, "project.name.alert");
-            return badRequest(newProject.render("title.newProject", filledNewProjectForm));
+            return badRequest(create.render("title.newProject", filledNewProjectForm));
 
         } else {
             Project project = filledNewProjectForm.get();
@@ -313,7 +313,7 @@ public class ProjectApp extends Controller {
      */
     public static Result members(String loginId, String projectName) {
 	Project project = Project.findByOwnerAndProjectName(loginId, projectName);
-        return ok(memberList.render("title.memberList",
+        return ok(views.html.project.members.render("title.memberList",
                 ProjectUser.findMemberListByProject(project.id), project,
                 Role.getActiveRoles()));
     }

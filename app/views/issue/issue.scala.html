@@ -19,7 +19,7 @@
 @main(getTitle(issue, project).toString(), project, utils.MenuType.ISSUE){
 <div class="page board-view">
 	@prjmenu(project, utils.MenuType.ISSUE, "main-menu-only")
-  
+
 	@** Post Info **@
 	<div class="board-header issue">
 		<div class="board-id div"><strong class="secondary-txt">#@issue.getNumber</strong></div>
@@ -31,50 +31,61 @@
 	</div>
   
 	@** Content body **@
-	<div class="board-body">
-		<div class="author-info">
-			<a href="@routes.UserApp.userInfo(issue.authorLoginId)" class="avatar-wrap pull-left">
-				<img src="@User.findByLoginId(issue.authorLoginId).avatarUrl" width="32" height="32" alt="@issue.authorName">
-			</a>
-			<div class="media-body">
-				<p>
-					@**<!-- author  -->**@
-					@Messages("issue.author") 
-					<a href="@routes.IssueApp.newIssueForm(project.owner, project.name)" @if(issue.assigneeName != null){ class="gray-txt" }>
-						<strong>@Option(issue.authorLoginId).orElse(Option(Messages("issue.noAuthor"))).get</strong>
+	<div class="board-body issue">
+		<div class="issue-options">
+			<dl class="frm-wrap">
+				<dt>@Messages("issue.author")</dt>
+				<dd style="padding:3px 0;">
+					<a href="@routes.UserApp.userInfo(issue.authorLoginId)" class="avatar-wrap small" style="display:inline-block;">
+						<img src="@User.findByLoginId(issue.authorLoginId).avatarUrl" width="32" height="32" alt="@issue.authorName">
 					</a>
-					&nbsp;&middot;&nbsp;
-					
-					@**<!-- assignee  -->**@
-					@Messages("issue.assignee")
-					@if(issue.assigneeName == null){ 
-					<a href="@if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.UPDATE)) {@routes.IssueApp.editIssueForm(project.owner, project.name, issue.id)#options} else {#}" class="gray-txt">
-						<strong>@Messages("issue.noAssignee")</strong>
-					</a>
+					<strong>@Option(issue.authorLoginId).orElse(Option(Messages("issue.noAuthor"))).get</strong>
+				</dd>
+			</dl>
+			
+			<dl class="frm-wrap">
+				<dt>@Messages("issue.assignee")</dt>
+				<dd>
+				@if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.UPDATE)) {
+					<select id="assigneeId" name="assignee.user.id" class="chzn-select-deselect" data-placeholder="@Messages("issue.noAssignee")">
+						<option value=""></option>
+						@ProjectUser.options(project.id).map{ v =>
+						<option value="@v._1" @if(issue.assignee != null && issue.assignee.user.id.toString() == v._1){selected="selected"}>@v._2</option>
+						}
+					</select>
+				} else {
+					@if(issue.assigneeName == null){
+					<a class="gray-txt"><strong>@Messages("issue.noAssignee")</strong></a>
 					} else {
 					<a href="@routes.IssueApp.issues(project.owner, project.name, "open")&assigneeId=@issue.assignee.user.id">
 						<strong>@issue.assigneeName</strong>
 					</a>
 					}
-				</p>
-        
-				@** status **@
-				<p>
-					@**<!-- comment  
-					@Messages("comment") <strong class="num">@issue.comments.size</strong>
-					-->**@
-					
-					@**<!-- milestone  -->**@
-					@Messages("milestone")
+				}
+				</dd>
+			</dl>
+			
+			<dl class="frm-wrap">
+				<dt>@Messages("milestone")</dt>
+				<dd>
+				@if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.UPDATE)) {
+					<select id="milestoneId" name="milestoneId" class="chzn-select-deselect" data-placeholder="@Messages("none")">
+						<option value=""></option>
+						@Milestone.options(project.id).map{ v =>
+						<option value="@v._1" @if(issue.milestone != null && issue.milestone.id.toString() == v._1){selected="selected"}>@v._2</option>
+						}
+					</select>
+				} else {
 					@if(issue.milestone != null) {
-						<strong class="num">@issue.milestone.title</strong>
+					<strong class="num">@issue.milestone.title</strong>
 					} else {
-						<a href="@if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.UPDATE)) {@routes.IssueApp.editIssueForm(project.owner, project.name, issue.id)#options} else {#}" class="gray-txt"><strong>@Messages("none")</strong></a>
+					<strong class="gray-txt">@Messages("none")</strong>
 					}
-				</p>
-			</div>
-    	</div>
-    	<div class="content" markdown="true">@issue.body</div>
+				}
+				</dd>
+		</div>
+		
+		<div class="content" markdown="true">@issue.body</div>
     	<div class="attachments" resourceType="@ResourceType.ISSUE_POST" resourceId="@issue.id"></div>
 	</div>
 	
@@ -182,18 +193,6 @@
 	<strong>${fileName}(${fileSizeReadable})</strong><!--
 	--><a class="attached-delete"><i class="ico btn-delete"></i></a></li>
 </script>
-
-@**<!-- 
-<div class="board-footer">
-  @if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.UPDATE)) {
-	<a href="@routes.IssueApp.editIssueForm(project.owner, project.name, issue.id)" class="nbtn orange medium">@Messages("button.edit")</a>
-  }
-  @if(isAllowed(UserApp.currentUser(), issue.asResource(), Operation.DELETE)) {
-	<a href="#deleteConfirm" data-toggle="modal" class="nbtn medium black">@Messages("button.delete")</a>
-  }
-	<a href="@routes.IssueApp.issues(project.owner, project.name,"open")" class="nbtn medium">@Messages("button.list")</a>
-</div>
- -->**@
 
 @** Confirm to delete post **@
 <div id="deleteConfirm" class="modal hide fade">

@@ -2051,6 +2051,7 @@
         color: #999;
     }
     &.issue {
+        .board-id { font-size:14px; }
         .title { width:650px; }
         .badge {
             font-size:11px;
@@ -2096,6 +2097,21 @@
     .attachments {
         ul { list-style-type:none; margin:0; }
         i { float:left; margin-right:5px; }
+    }
+    
+    &.issue {
+        padding:0;
+        .issue-options {
+            margin-bottom:23px; background:#f7f7f7; border-bottom:1px solid #eee;
+            .frm-wrap {
+                display:inline-block; margin-right:50px; 
+                &:first-of-type {
+                    margin-left:30px;
+                }
+            }
+        }
+        .content { padding:10px;}
+        .attachments { padding:10px; }
     }
 }
 

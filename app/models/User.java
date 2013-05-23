@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.persistence.*;
@@ -127,7 +128,7 @@ public class User extends Model {
      * @return
      */
     public String getDateString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy", Locale.US);
         return sdf.format(this.createdDate);
     }
 
@@ -253,7 +254,7 @@ public class User extends Model {
      */
     @Transient
     public Long avatarId(){
-        return Attachment.findByContainer(ResourceType.USER_AVATAR, id).get(0).id;
+        return Attachment.findByContainer(avatarAsResource()).get(0).id;
     }
 
     /**
@@ -310,6 +311,25 @@ public class User extends Model {
             @Override
             public ResourceType getType() {
                 return ResourceType.USER;
+            }
+        };
+    }
+
+    public Resource avatarAsResource() {
+        return new Resource() {
+            @Override
+            public Long getId() {
+                return id;
+            }
+
+            @Override
+            public Project getProject() {
+                return null;
+            }
+
+            @Override
+            public ResourceType getType() {
+                return ResourceType.USER_AVATAR;
             }
         };
     }

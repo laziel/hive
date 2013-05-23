@@ -40,7 +40,7 @@
 						<li><a href="@routes.UserApp.editUserInfoForm()">@Messages("userinfo.accountSetting")</a></li>
 						<li><a href="@routes.UserApp.logout()">@Messages("title.logout")</a></li>
                         <li class="divider"></li>
-                    @defining(User.findByLoginId(session.get("loginId")).myProjects()){ myProjects =>
+                    @defining(User.findByLoginId(session.get("loginId")).myProjects("name")){ myProjects =>
                     @if(myProjects.length > 0){
                         <li class="disabled"><span>@Messages("project.myproject")</span></li>
                         @for(project <- myProjects){

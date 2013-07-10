@@ -298,6 +298,7 @@
             htElement.welBtnRawCode.show();
             htElement.welBtnFullScreen.show();
 
+            htVar.nCodeLines = sCode.split("\n").length;
             htVar.oSession.setMode("ace/mode/" + sMode);
             htVar.oEditor.setValue(sCode, -1);
             
@@ -358,13 +359,21 @@
             oAce.setReadOnly(true);
             oAce.setFontSize(htVar.nFontSize);
             oAce.setShowPrintMargin(false);
-
+            oAce.on("change", _onEditorChange);
+            
             // EditSession
             htVar.oSession = oAce.getSession(); 
             
             return oAce;
         }
 
+        function _onEditorChange(oEvt){
+            var bInsert = (oEvt.data.action === "insertText" || oEvt.data.action === "insertLines");
+            if(htVar.nCodeLines > 0 && htVar.nCodeLines == oEvt.data.range.end.row + 1){
+                // console.log("EOF");
+            }
+        }
+        
         /**
          * 파일명을 기준으로 사용가능한 aceEditor mode 반환
          * @param {String} sPath
